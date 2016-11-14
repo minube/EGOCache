@@ -334,16 +334,10 @@ static inline NSString* cachePathForKey(NSString* directory, NSString* key) {
 
 #endif
 
-#pragma mark -
 #pragma mark Property List methods
-
 - (NSData*)plistForKey:(NSString*)key; {  
 	NSData* plistData = [self dataForKey:key];
-	
-	return [NSPropertyListSerialization propertyListFromData:plistData
-											mutabilityOption:NSPropertyListImmutable
-													  format:nil
-											errorDescription:nil];
+    return [NSPropertyListSerialization  propertyListWithData:plistData options:NSPropertyListImmutable format:nil error:nil];
 }
 
 - (void)setPlist:(id)plistObject forKey:(NSString*)key; {
@@ -351,15 +345,10 @@ static inline NSString* cachePathForKey(NSString* directory, NSString* key) {
 }
 
 - (void)setPlist:(id)plistObject forKey:(NSString*)key withTimeoutInterval:(NSTimeInterval)timeoutInterval; {
-	// Binary plists are used over XML for better performance
-	NSData* plistData = [NSPropertyListSerialization dataFromPropertyList:plistObject 
-																   format:NSPropertyListBinaryFormat_v1_0
-														 errorDescription:NULL];
-	
+    NSData* plistData = [NSPropertyListSerialization dataWithPropertyList:plistObject format:NSPropertyListBinaryFormat_v1_0 options:NSPropertyListImmutable error:nil];
 	[self setData:plistData forKey:key withTimeoutInterval:timeoutInterval];
 }
 
-#pragma mark -
 #pragma mark Object methods
 
 - (id<NSCoding>)objectForKey:(NSString*)key {
@@ -376,12 +365,6 @@ static inline NSString* cachePathForKey(NSString* directory, NSString* key) {
 
 - (void)setObject:(id<NSCoding>)anObject forKey:(NSString*)key withTimeoutInterval:(NSTimeInterval)timeoutInterval {
 	[self setData:[NSKeyedArchiver archivedDataWithRootObject:anObject] forKey:key withTimeoutInterval:timeoutInterval];
-}
-
-#pragma mark -
-
-- (void)dealloc {
-
 }
 
 @end
